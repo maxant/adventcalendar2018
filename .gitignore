@@ -1,0 +1,4 @@
+**/node_modules
+**/esptool
+
+Arduino/002/server01/src/passwords.h
