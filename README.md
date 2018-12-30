@@ -254,8 +254,9 @@ it outputs:
 
 ---
 arduino IDE does this (taken when using debug output)
-python /home/ant/.arduino15/packages/esp32/tools/esptool/2.3.1/esptool.py --chip esp32 --port /dev/ttyUSB0 --baud 115200 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size detect 0xe000 /home/ant/.arduino15/packages/esp32/hardware/esp32/1.0.0/tools/partitions/boot_app0.bin 0x1000 /home/ant/.arduino15/packages/esp32/hardware/esp32/1.0.0/tools/sdk/bin/bootloader_qio_80m.bin 0x10000 /tmp/arduino_build_266402/music.ino.bin 0x8000 /tmp/arduino_build_266402/music.ino.partitions.bin 
-e
+
+    python /home/ant/.arduino15/packages/esp32/tools/esptool/2.3.1/esptool.py --chip esp32 --port /dev/ttyUSB0 --baud 115200 --before default_reset --after hard_reset write_flash -z --flash_mode dio --flash_freq 80m --flash_size detect 0xe000 /home/ant/.arduino15/packages/esp32/hardware/esp32/1.0.0/tools/partitions/boot_app0.bin 0x1000 /home/ant/.arduino15/packages/esp32/hardware/esp32/1.0.0/tools/sdk/bin/bootloader_qio_80m.bin 0x10000 /tmp/arduino_build_266402/music.ino.bin 0x8000 /tmp/arduino_build_266402/music.ino.partitions.bin 
+
 ---
 
 then change wifi and connect to nodeesp
