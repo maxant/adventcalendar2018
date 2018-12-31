@@ -24,6 +24,7 @@ http://fritzing.org/home/
 
 https://iot.fkainka.de/nodeesp-command-reference
 https://www.espressif.com/en/support/download/overview
+https://www.espressif.com/sites/default/files/documentation/esp32_technical_reference_manual_en.pdf
 https://iot.fkainka.de/driver => couldnt get it to compile
 http://playground.arduino.cc/Learning/Linux => altho it seems you can just install it on ubuntu
 https://www.arduino.cc/en/Guide/Troubleshooting#upload
@@ -37,6 +38,9 @@ webserver: https://github.com/espressif/arduino-esp32/blob/master/libraries/WebS
 pin map: https://github.com/espressif/arduino-esp32/
 
 pin reference: https://randomnerdtutorials.com/esp32-pinout-reference-gpios/
+
+lots of stuff can be included from here: /home/ant/.arduino15/packages/esp32/hardware/esp32/1.0.0/tools/sdk/include
+ e.g. driver/driver/adc.h
 
 ## TODO
 

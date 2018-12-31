@@ -11,7 +11,7 @@
 class Led
 {
   public:
-    Led(int pin, int frequency = 5000, int resolution = 256);
+    Led(int pin, int frequency = 5000, int resolution = 8);
     void write(int value);
     void off();
     static const int OFF = 256;
