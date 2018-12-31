@@ -2,6 +2,7 @@
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
+#include <rgbled.h>
 #include "src/passwords.h"
 
 #ifdef __cplusplus
@@ -13,14 +14,14 @@ uint8_t temprature_sens_read();
 #endif
 uint8_t temprature_sens_read();
 
-
+RgbLed onboardLed = RgbLed(4, 2, 0);
 const int PORT = 80;
 const int pinLedOut = 22;
 const int pinVarResistorIn = 35;
-const int LED_BUILTIN = 2;
+const int pinAdcIn = 36;
 const int pinButtonIn = 18;
 
-int ledstate = 0;
+int onboardLedState = 240;
 int ledTimerUntil = 0;
 
 WebServer server(PORT);
@@ -43,16 +44,9 @@ WiFi.setHostname("antsboard");
   Serial.println("HTTP server started, listening on port " + PORT);
 
   pinMode(pinVarResistorIn, INPUT);
+  pinMode(pinAdcIn, INPUT);
   pinMode(pinLedOut, OUTPUT);
   pinMode(pinButtonIn, INPUT_PULLUP);
-
-// configure onboard led (turn off with 2, 3 and 4 to high; red is 2=high; pin3 doesnt seem to have an effect; just pin4=high is green;
-pinMode(LED_BUILTIN, OUTPUT);
-digitalWrite(LED_BUILTIN, 1);
-//pinMode(3, OUTPUT);
-//digitalWrite(3, 1);
-pinMode(4, OUTPUT);
-digitalWrite(4, 1);
 }
 
 void loop(void) {
@@ -70,6 +64,11 @@ void loop(void) {
   }
   
   server.handleClient();
+
+  onboardLedState++;
+  if(onboardLedState > 256) onboardLedState = 240;
+  onboardLed.write(Led::OFF, Led::OFF, onboardLedState);
+  delay(200);
 }
 
 void handleNotFound() {
@@ -93,6 +92,7 @@ void handleRoot() {
   char temp[400];
 
   int val = analogRead(pinVarResistorIn);
+  int voltage = analogRead(pinAdcIn);
   int ledOn = digitalRead(pinLedOut);
   double h = hallRead();
   double t = (temprature_sens_read() - 32) / 1.8;
@@ -104,9 +104,10 @@ void handleRoot() {
                 <p>led on? %09d</p>\
                 <p>hall: %09f</p>\
                 <p>temp C: %09f</p>\
+                <p>voltage: %09d</p>\
               </body>\
             </html>"
-            ,val, ledOn, h, t);
+            ,val, ledOn, h, t, voltage);
   server.send(200, "text/html", temp);
 }
 
