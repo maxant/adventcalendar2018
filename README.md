@@ -110,7 +110,7 @@ http://127.0.0.1:1880/
 
 ## day 6 node-red
 
-##day 7 treppenlicht
+## day 7 treppenlicht
 
 set udp sending node to use address "nodeesp.local"
 enable/disable flows by double clicking on their tab
@@ -124,6 +124,53 @@ command reference from https://iot.fkainka.de/nodeesp-command-reference
     {"cmd":"get_button_config"}
     {"cmd":"get_button_state"}
 
+## day 9 photo transistor
+
+cathode is short leg, goes to positive, opposite of an LED! looks like a see thru led, with one side (short leg cathode) trimmed flat. long leg to gnd.
+
+3.3v  -> pot left leg
+gnd   -> pot right leg
+wiper -> adc pin (36)
+wiper -> short leg of photo transistor
+ph.tr.long -> gnd
+
+turn lights off. set pot so adc pin reads about 4000
+turn lights on. adc pin now reads lower, the brighter it gets.
+
+## day 10 deep sleep
+
+the idea is to sleep the board and take a reading of sunlight only every say minute.
+
+## day 11 MQTT
+
+TODO
+
+## day 15 IR receiver
+
+black with a round bump and three pins
+
+connects with middle leg to gnd. use pins 21 (wire sda) and 19 (v spi miso master in slave out). make bump face outwards away from esp32.
+
+looking at bump, out is on right (21), v+ is on left (19).
+
+http://www.circuitbasics.com/arduino-ir-remote-receiver-tutorial/
+
+=> zip taken from: http://z3t0.github.io/Arduino-IRremote/ => not tried...
+
+TODO do i need to remove sd card?
+
+https://github.com/cyborg5/IRLib2/blob/master/IRLib2/manuals/IRLibReference.pdf => didnt compile
+
+https://www.youtube.com/watch?v=gADIb1Xw8PE
+=> https://github.com/SensorsIot/Definitive-Guide-to-IR/blob/master/IRMQTT_ESP32/IRMQTT_ESP32.ino => looks promising! should work on ESP32
+=> => seems to take code from http://z3t0.github.io/Arduino-IRremote/ => installed zip as per instructions by unzipping and placing into libraries folder
+=> => compatible with http://www.circuitbasics.com/arduino-ir-remote-receiver-tutorial/ ???
+
+works!
+looking at bump: left -> pin21, middle -> gnd, right -> 5v
+
+short leg of IR led to ground
+long legt of IR led to pin 17
 
 ## IDE
 https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/

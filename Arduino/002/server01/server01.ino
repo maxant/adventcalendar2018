@@ -2,6 +2,9 @@
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ESPmDNS.h>
+
+#include <IRremote.h>
+
 #include <rgbled.h>
 #include "src/passwords.h"
 
@@ -20,6 +23,13 @@ const int pinLedOut = 22;
 const int pinVarResistorIn = 35;
 const int pinAdcIn = 36;
 const int pinButtonIn = 18;
+
+// infrared 
+const int pinIrRecv = 21;
+const int pinIrSend = 17;
+IRrecv irrecv(pinIrRecv);
+decode_results results;
+IRsend irsend(pinIrSend);
 
 int onboardLedState = 240;
 int ledTimerUntil = 0;
@@ -47,9 +57,29 @@ WiFi.setHostname("antsboard");
   pinMode(pinAdcIn, INPUT);
   pinMode(pinLedOut, OUTPUT);
   pinMode(pinButtonIn, INPUT_PULLUP);
+
+  // IR receiver
+  pinMode(pinIrRecv, INPUT);
+  irrecv.enableIRIn();
 }
 
 void loop(void) {
+
+  {
+    unsigned int rawCodes[RAWBUF];
+    int codeLen = 32;
+    rawCodes[0] = 1;
+    irsend.sendRaw(rawCodes, codeLen, 38); //assume 38KHz
+  }
+  
+  if (irrecv.decode(&results)) {
+    Serial.printf("ir received\n");
+    Serial.println(results.value, HEX); //eg 68733A46
+    //Serial.println(results->value); as a number eg 1752382022
+    //handleIrResults(&results);
+    irrecv.resume();
+  }
+
   int button = digitalRead(pinButtonIn);
   if(button == LOW) {
     //button is pushed => extend timer
@@ -65,9 +95,10 @@ void loop(void) {
   
   server.handleClient();
 
-  onboardLedState++;
+  onboardLedState += 2;
   if(onboardLedState > 256) onboardLedState = 240;
   onboardLed.write(Led::OFF, Led::OFF, onboardLedState);
+
   delay(200);
 }
 
@@ -110,6 +141,41 @@ void handleRoot() {
             ,val, ledOn, h, t, voltage);
   server.send(200, "text/html", temp);
 }
+
+void handleIrResults(decode_results *results) {
+  char buf[10];
+  String cType = "";
+  String IRcommand = "";
+
+  int codeType = results->decode_type;
+  int codeLen = results->rawlen - 1;
+  unsigned int rawCodes[RAWBUF]; // The durations
+  // To store raw codes:
+  // Drop first value (gap)
+  // Convert from ticks to microseconds
+  // Tweak marks shorter, and spaces longer to cancel out IR receiver distortion
+  for (int i = 1; i <= codeLen; i++) {
+    if (i % 2) {
+      // Mark
+      rawCodes[i - 1] = results->rawbuf[i] * USECPERTICK - MARK_EXCESS;
+      //Serial.print(" m");
+    }
+    else {
+      // Space
+      rawCodes[i - 1] = results->rawbuf[i] * USECPERTICK + MARK_EXCESS;
+      //Serial.print(" s");
+    }
+    //Serial.print(rawCodes[i - 1], DEC);
+  }
+
+  unsigned long codeValue = results->value;
+  codeLen = results->bits;
+  Serial.println(results->value, HEX);
+  Serial.println(results->bits);
+  Serial.println(codeType);
+  Serial.println(results->value);
+}
+
 
 /*
 snippets

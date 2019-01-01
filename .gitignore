@@ -2,3 +2,7 @@
 **/esptool
 
 Arduino/002/server01/src/passwords.h
+
+Arduino/libraries/IRLib*
+Arduino/libraries/z3t0-Arduino-IRremote-2dc97b2
+
