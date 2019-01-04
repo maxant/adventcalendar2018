@@ -29,7 +29,7 @@ const int pinIrRecv = 21;
 const int pinIrSend = 17;
 IRrecv irrecv(pinIrRecv);
 decode_results results;
-IRsend irsend(pinIrSend);
+//IRsend irsend(pinIrSend);
 
 int onboardLedState = 240;
 int ledTimerUntil = 0;
@@ -69,7 +69,7 @@ void loop(void) {
     unsigned int rawCodes[RAWBUF];
     int codeLen = 32;
     rawCodes[0] = 1;
-    irsend.sendRaw(rawCodes, codeLen, 38); //assume 38KHz
+    //irsend.sendRaw(rawCodes, codeLen, 38); //assume 38KHz
   }
   
   if (irrecv.decode(&results)) {
@@ -95,7 +95,7 @@ void loop(void) {
   
   server.handleClient();
 
-  onboardLedState += 2;
+  onboardLedState++; // += 2;
   if(onboardLedState > 256) onboardLedState = 240;
   onboardLed.write(Led::OFF, Led::OFF, onboardLedState);
 

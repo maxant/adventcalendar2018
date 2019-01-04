@@ -11,6 +11,7 @@ this isnt from me:
 
 ## To Read
 
+https://docs.espressif.com/projects/esp-idf/en/latest/get-started/linux-setup.html
 file:///home/ant/Downloads/Arduino%20In%20A%20Nutshell%201.13.pdf
 https://github.com/FKainka/NanoESP/
 https://www.heise.de/make/artikel/ESP-Boards-mit-der-Arduino-IDE-programmieren-4130861.html
@@ -44,6 +45,9 @@ lots of stuff can be included from here: /home/ant/.arduino15/packages/esp32/har
 
 ## TODO
 
+- https://www.espressif.com/sites/default/files/documentation/esp32_bluetooth_networking_user_guide_en.pdf
+- Serial.setDebugOutput(true); => and how do eg BLE classes do their debug output to serial?
+- https://randomnerdtutorials.com/rf-433mhz-transmitter-receiver-module-with-arduino/
 - deep sleep
 - OTA update
 - use eeprom for config settings
@@ -66,6 +70,12 @@ lots of stuff can be included from here: /home/ant/.arduino15/packages/esp32/har
 - fix error relating to wifi connect that seems to come when we make an http request
 - reconnect if wifi lost? => works out-of-the-box
 - https://www.arduino.cc/en/Reference/EEPROM
+
+## ESP-IDF
+
+https://docs.espressif.com/projects/esp-idf/en/latest/get-started
+
+    export IDF_PATH=/w/adventcalendar2018/esp-idf
 
 ==========================================
 
@@ -169,8 +179,29 @@ https://www.youtube.com/watch?v=gADIb1Xw8PE
 works!
 looking at bump: left -> pin21, middle -> gnd, right -> 5v
 
+IR LED: slightly bluish tint.
 short leg of IR led to ground
-long legt of IR led to pin 17
+long leg of IR led to pin 17
+
+
+## BLE LED Bulb
+
+22:40:06.717 -> Advertised Device: Name: unpaired, Address: a4:c1:38:b7:12:d8, manufacturer data: 60012910d812b738010204d8000364ff00000101000000000000000000, serviceUUID: 00001800-0000-1000-8000-00805f9b34fb 
+
+22:40:06.841 -> Advertised Device: Name: ENVY Photo 6200 series, Address: 4a:ba:4e:6a:42:3d, manufacturer data: 650001c901, serviceUUID: 0000fe78-0000-1000-8000-00805f9b34fb, txPower: 6 
+
+https://medium.com/@urish/reverse-engineering-a-bluetooth-lightbulb-56580fcb7546
+
+https://www.arduino.cc/en/Reference/CurieBLE
+
+record ble from app:
+
+developer in android: https://www.google.com/search?q=huawei+p20+lite+android+6+developer+mode&oq=huawei+p20+lite+android+6+developer+mode&aqs=chrome..69i57.14761j1j7&sourceid=chrome&ie=UTF-8
+click loads on settings->aboutPhone->buildNumber
+
+
+
+
 
 ## IDE
 https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/
