@@ -61,34 +61,53 @@ bool connectToServer(BLEAddress pAddress) {
     }
     Serial.println(" - Found our service");
     Serial.println(pRemoteService->toString().c_str());
-    Serial.println("---");
-
-    Serial.println("\n\n\HEREn\n");
-    BLEUUID a("00010203-0405-0607-0809-0a0b0c0d1911");
-    BLEUUID b("00010203-0405-0607-0809-0a0b0c0d1912");
-    BLEUUID c("00010203-0405-0607-0809-0a0b0c0d1913");
-    BLEUUID d("00010203-0405-0607-0809-0a0b0c0d1914");
-    Serial.printf("a: '%s'", pRemoteService->getCharacteristic(a)->readValue().c_str());
-    Serial.printf("b: '%s'", pRemoteService->getCharacteristic(b)->readValue().c_str());
-    Serial.printf("c: '%s'", pRemoteService->getCharacteristic(c)->readValue().c_str());
-    Serial.printf("d: '%s'", pRemoteService->getCharacteristic(d)->readValue().c_str());
-    Serial.println("-----");
-
+    Serial.println("\n\n\n----");
+/*
+    debug(pRemoteService, "00010203-0405-0607-0809-0a0b0c0d1911");
+    debug(pRemoteService, "00010203-0405-0607-0809-0a0b0c0d1912");
+    debug(pRemoteService, "00010203-0405-0607-0809-0a0b0c0d1913");
+    debug(pRemoteService, "00010203-0405-0607-0809-0a0b0c0d1914");
+  */
     
-    /*std::map<std::string, BLERemoteCharacteristic*>* characteristics = pRemoteService->getCharacteristics();
+    std::map<std::string, BLERemoteCharacteristic*>* characteristics = pRemoteService->getCharacteristics();
     for (std::map<std::string, BLERemoteCharacteristic*>::iterator it=characteristics->begin(); it!=characteristics->end(); ++it) {
-      Serial.println(it->first.c_str());
+
       if(it->second->canRead()) {
-        Serial.println(it->second->toString().c_str());
-        Serial.print("'");
-        Serial.print(it->second->readValue().c_str());
-        Serial.println("'");
+        debug(pRemoteService, it->first);
       } else {
-        Serial.println("cant read it");
+        Serial.print(it->first.c_str());
+        Serial.println(" - cant read it");
       }      
-      Serial.println("----");
-    }*/
-    Serial.println("e");
+    }
+    Serial.println("----");
+
+  string s = "";
+  s += (char) 0;
+  s += (char) 2;
+  s += (char) 217;
+  s += (char) 60;
+  s += (char) 69;
+  s += (char) 45;
+  s += (char) 123;
+  s += (char) 70;
+  s += (char) 88;
+  s += (char) 179;
+  s += (char) 19;
+  s += (char) 86;
+  s += (char) 98;
+  s += (char) 20;
+  s += (char) 114;
+  s += (char) 221;
+  s += (char) 252;
+  pRemoteService->getCharacteristic("00010203-0405-0607-0809-0a0b0c0d1914")->writeValue(s);
+
+Serial.println("written!");
+debug(pRemoteService, "00010203-0405-0607-0809-0a0b0c0d1914");
+
+
+    pClient->disconnect(); // TODO necessary?
+    return false;
+/*
     pRemoteCharacteristic = pRemoteService->getCharacteristic(charUUID);
     Serial.println("f");
     if (pRemoteCharacteristic == nullptr) {
@@ -106,7 +125,18 @@ bool connectToServer(BLEAddress pAddress) {
     Serial.println(value.c_str());
 
     pRemoteCharacteristic->registerForNotify(notifyCallback);
+*/
 }
+
+void debug(BLERemoteService* pRemoteService, string characteristicId) {
+    string s = pRemoteService->getCharacteristic(characteristicId)->readValue();
+    for (auto ch : s) { // bytes
+      int i = ch;
+      Serial.printf("%d,", i);
+    }
+    Serial.printf(";%d\n", s.size());
+}
+
 /**
  * Scan for BLE servers and find the first one that advertises the service we are looking for.
  */
@@ -146,11 +176,11 @@ Serial.println("d");
 
 void setup() {
 
-  esp_log_level_set("*", ESP_LOG_INFO);
-
   Serial.begin(115200);
   Serial.println("Starting Arduino BLE Client application...");
   BLEDevice::init("");
+
+  esp_log_level_set("*", ESP_LOG_INFO);
 
   // Retrieve a Scanner and set the callback we want to use to be informed when we
   // have detected a new device.  Specify that we want active scanning and start the
@@ -165,6 +195,8 @@ void setup() {
 // This is the Arduino main loop function.
 void loop() {
 
+  esp_log_level_set("*", ESP_LOG_INFO);
+
   // If the flag "doConnect" is true then we have scanned for and found the desired
   // BLE Server with which we wish to connect.  Now we connect to it.  Once we are 
   // connected we set the connected flag to be true.
@@ -173,7 +205,7 @@ void loop() {
       Serial.println("We are now connected to the BLE Server.");
       connected = true;
     } else {
-      Serial.println("We have failed to connect to the server; there is nothin more we will do.");
+      //Serial.println("We have failed to connect to the server; there is nothin more we will do.");
     }
     //doConnect = false;
   }

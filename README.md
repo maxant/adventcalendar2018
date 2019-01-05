@@ -200,8 +200,32 @@ developer in android: https://www.google.com/search?q=huawei+p20+lite+android+6+
 click loads on settings->aboutPhone->buildNumber
 
 
+ON::RED
+1:28:36.696 -> [D][BLERemoteCharacteristic.cpp:434] readValue(): >> readValue(): uuid: 00010203-0405-0607-0809-0a0b0c0d1911, handle: 18 0x12
+01:28:36.763 -> 1,;1
+01:28:36.763 -> [D][BLERemoteCharacteristic.cpp:434] readValue(): >> readValue(): uuid: 00010203-0405-0607-0809-0a0b0c0d1912, handle: 21 0x15
+01:28:36.829 -> 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,;16
+01:28:36.829 -> [D][BLERemoteCharacteristic.cpp:434] readValue(): >> readValue(): uuid: 00010203-0405-0607-0809-0a0b0c0d1913, handle: 24 0x18
+01:28:36.862 -> 224,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,;16
+01:28:36.862 -> [D][BLERemoteCharacteristic.cpp:434] readValue(): >> readValue(): uuid: 00010203-0405-0607-0809-0a0b0c0d1914, handle: 27 0x1b
+01:28:36.929 -> 0,129,234,46,51,116,121,232,167,122,211,195,104,20,213,88,33,;17
 
 
+OFF
+01:32:03.612 -> [D][BLERemoteCharacteristic.cpp:462] readValue(): << readValue(): length: 1
+01:32:03.612 -> 1,;1
+01:32:03.612 -> [D][BLERemoteCharacteristic.cpp:434] readValue(): >> readValue(): uuid: 00010203-0405-0607-0809-0a0b0c0d1912, handle: 21 0x15
+01:32:03.679 -> 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,;16
+01:32:03.679 -> [D][BLERemoteCharacteristic.cpp:434] readValue(): >> readValue(): uuid: 00010203-0405-0607-0809-0a0b0c0d1913, handle: 24 0x18
+01:32:03.745 -> 224,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,;16
+01:32:03.745 -> [D][BLERemoteCharacteristic.cpp:434] readValue(): >> readValue(): uuid: 00010203-0405-0607-0809-0a0b0c0d1914, handle: 27 0x1b
+01:32:03.778 -> 0,196,191,114,168,30,93,135,146,26,10,126,254,62,173,225,34,;17
+
+
+ON again: ?!??
+                0,2,217,60,69,45,123,70,88,179,19,86,98,20,114,221,252,;17
+
+00-02-D9-3C-45-2D-7B-46-58-B3-13-56-62-14-72-DD-FC
 
 ## IDE
 https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/
