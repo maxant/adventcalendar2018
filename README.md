@@ -45,6 +45,13 @@ lots of stuff can be included from here: /home/ant/.arduino15/packages/esp32/har
 
 ## TODO
 
+- buy board:
+  - 10.38 CHF: https://www.reichelt.com/ch/de/nodemcu-esp32-wifi-und-bluetooth-modul-debo-jt-esp32-p219897.html?CTYPE=0&MWSTFREE=0&PROVID=2788&wt_gacha=52739723923_305799718989&PROVID=2788&gclid=Cj0KCQiA68bhBRCKARIsABYUGicOvMyuAinnCGnhqNKca64vprw2UbWvD9HEQW4PhCY3dxhghcgHlzIaAhjbEALw_wcB&&r=1
+  - 24.90 CHF: https://www.maker-shop.ch/sparkfun-esp32-thing
+  - 9.95 CHF: https://www.mouser.ch/ProductDetail/Espressif-Systems/ESP32-DevKitC?qs=sGAEpiMZZMve4%2fbfQkoj%252bGfWvZDd%252brPwCf9bks%2fpTPM%3d
+    - loads of different boards. see also https://www.espressif.com/sites/default/files/documentation/espressif_products_ordering_information_en.pdf
+  - all kinds of stuff: https://hobby-elektronik.ch/Zubehoer-Werkstatt/Kabel-Verkabelung:::6_11.html
+  - quick delivery: https://shopofthings.ch/produkt-kategorie/iot-module/
 - https://www.espressif.com/sites/default/files/documentation/esp32_bluetooth_networking_user_guide_en.pdf
 - Serial.setDebugOutput(true); => and how do eg BLE classes do their debug output to serial?
 - https://randomnerdtutorials.com/rf-433mhz-transmitter-receiver-module-with-arduino/
@@ -62,7 +69,40 @@ lots of stuff can be included from here: /home/ant/.arduino15/packages/esp32/har
 - MOSI = master out slave in
 - multiple i2c: https://www.youtube.com/watch?v=QQLfzlPGjjE
 - touch tft: https://ch.rs-online.com/web/p/entwicklungskits-grafikdisplay/7916378/
-- gps: 
+  - https://www.mikroe.com/tft-proto-board
+    - see links for instructions. but nowt useful
+  - MI0283QT-9A with 320x240 pixel resolution, which is driven by ILI9341
+  - https://github.com/loboris/ESP32_TFT_library => uses latest esp-idf stuff. SPI connection.
+  - https://github.com/G6EJD/ESP32-and-how-to-use-ILI9341-TFT-Display
+  - pins:
+    - MOSI = SDI
+    - MISO = SDO
+    - sck = ??, serial clock? => must be RS on display 
+    - cs = cs
+    - dc = ??? data/command input => could be WR as thats left over
+    - tcs = touch panel, if used ??? => could be TE???
+    - rst = reset => pullup the reset input to Vcc
+    - BL = ?? => 3.3v => backlight => see led-k/a below
+    - vcc => 3.3 or 5v
+
+board also has TE, RS, RD, WR, IM0-3, LEDK, LEDA
+https://forum.mikroe.com/viewtopic.php?f=12&t=48169&p=186582&hilit=tft#p186582
+https://www.mikrocontroller.net/attachment/64474/HX8347-D_DS_T_v02_090324.pdf
+https://forum.mikroe.com/viewtopic.php?f=12&t=47582
+https://download.mikroe.com/documents/add-on-boards/other/display/tft-proto/tft-proto-manual-v200.pdf
+
+RS=register select
+CS=chip select
+RD=read enable
+WR=write enable=scl
+LED-K - Connected to the backlight circuit and further connected to the GPIO pin of the microntroller, so it can be toggled from the code.
+LED-A - Connected to the voltage of the system (VCC-SYS) on which the TFT proto board is connected (3.3V - 5V).
+
+now trying https://github.com/adafruit/Adafruit_ILI9341/blob/master/examples/graphicstest/graphicstest.ino
+
+
+
+- gps: https://forum.arduino.cc/index.php?topic=455373.0
 - lidar: https://www.youtube.com/watch?v=VhbFbxyOI1k
   - http://wiki.seeedstudio.com/Grove-TF_Mini_LiDAR/
   - RS Best.-Nr. 174-3264
@@ -226,6 +266,121 @@ ON again: ?!??
                 0,2,217,60,69,45,123,70,88,179,19,86,98,20,114,221,252,;17
 
 00-02-D9-3C-45-2D-7B-46-58-B3-13-56-62-14-72-DD-FC
+
+
+https://github.com/dragouf/awox-smartlight
+https://www.mathieupassenaud.fr/control-your-plugs-with-bluetooth-and-bash-scripts/
+
+
+debug hci
+=============
+using lenny5: adb pull /sdcard/mtklog/btlog/btsnoop_hci.log
+
+writes: btatt.opcode.method==0x12
+better: bluetooth.addr==a4:c1:38:b7:12:d8
+
+eg:
+Bluetooth Attribute Protocol
+	Opcode: Write Request (0x12)
+	Handle: 0x0015 (Unknown: Unknown)
+		[Service UUID: 000102030405060708090a0b0c0d1910]
+		[UUID: 000102030405060708090a0b0c0d1912]
+	Value: b400002ac2258d57fd1b7db97d83fe45918fcc22
+
+				Value: b00000a25a99edf58d181cce98ddedbd1ee454e1
+				Value: b10000c3b3005b42f10d579fa9fa3f9d265e4487				
+				Value: b20000b680bdc9a5a71bbce5bf800021a1787587
+			 	on?:   b300003a662ebfd43de7f0aba806326b6f9be01c
+last write request was to turn it off: b400002ac2258d57fd1b7db97d83fe45918fcc22
+
+14-11-12x
+
+14ers:
+Value: 0c690ee2b22bbf5967f6315d8a8a51638d
+Value: 0c8f1714fb6a29e831718c8cbe6b8d2c24
+Value: 0c470829f281ec9730a2d348d73a5ced35
+
+once connected. turn off like this:
+
+0897: Value: 0f000096d9b20b862b2558aa5194f29276a80ecb
+0901: Value: 10000065d7f99ab57a348894ce5cf907228b3736
+
+turn on again:
+
+0905: Value: 110000292b2f5766be7d6141b21c7ac265d7e3c7
+0907: Value: 120000c9b2e933f2119e26b9aa9f22b606480a3e
+
+off again:
+
+0915: Value: 130000186cc0101c8adf78df163f719dae64b1be
+0919: Value: 140000b8f865ef59c981ba92025df59336d2015f
+
+--------------
+
+    mkdir apks => and add it to .gitignore!
+    cd apks
+
+(future? maybe easier here: https://www.apkmonk.com/app/com.awox.smart.control/)
+
+https://stackoverflow.com/questions/4032960/how-do-i-get-an-apk-file-from-an-android-device
+
+    adb shell pm list packages | grep awox
+
+=> seems to be: `package:com.awox.smart.control`
+
+
+    adb shell pm path com.awox.smart.control
+
+=> `package:/data/app/com.awox.smart.control-2506inyUHNLyZXnib01bGg==/base.apk`
+
+    adm pull /data/app/com.awox.smart.control-2506inyUHNLyZXnib01bGg==/base.apk
+
+https://ibotpeaches.github.io/Apktool/documentation/
+
+    sudo apt install apktool
+
+    cd apks
+
+    apktool d base.apk 
+
+=> not so useful - its just a load of smali files
+
+https://stackoverflow.com/questions/5582824/decompile-smali-files-on-an-apk
+
+https://github.com/pxb1988/dex2jar/releases/tag/2.0
+
+downloaded and unzipped to apks folder
+
+    cd apks/dex2jar-2.0
+    sh d2j-dex2jar.sh -f ../base.apk
+
+=> created `base-dex2jar.jar` in `dex2jar-2.0` folder. => move it up a folder, unzip it, then open individual files with intellij
+
+    find . -name '*.class' | xargs grep 0a0b0c0d1912 
+
+=>
+	package com.awox.core.impl;
+	public class Protocol {
+	    public static final String CHARACTERISTIC_MESH_LIGHT_COMMAND = "00010203-0405-0607-0809-0a0b0c0d1912";
+	    public static final String CHARACTERISTIC_MESH_LIGHT_OTA = "00010203-0405-0607-0809-0a0b0c0d1913";
+	    public static final String CHARACTERISTIC_MESH_LIGHT_PAIR = "00010203-0405-0607-0809-0a0b0c0d1914";
+	    public static final String CHARACTERISTIC_MESH_LIGHT_STATUS = "00010203-0405-0607-0809-0a0b0c0d1911";
+
+getting hold of mesh_password:
+
+	adb shell pm list packages | grep awox
+	package:com.awox.smart.control
+	ant@hades-ubuntu:/w/adventcalendar2018/apks/jar-contents$ adb exec-out run-as com.awox.smart.control cat /data/data/com.awox.smart.control/shared_prefs/com.awox.smart.control_preferences.xml
+	run-as: package not debuggable: com.awox.smart.control
+
+so... https://android.stackexchange.com/questions/48609/how-can-i-access-the-files-in-data-data-and-copy-them-into-memory-card-withou
+
+	adb backup -noapk com.awox.smart.control
+
+https://nelenkov.blogspot.com/2012/06/unpacking-android-backups.html
+https://stackoverflow.com/questions/29830981/error-zlib-is-an-invalid-command
+dd if=backup.ab bs=1 skip=24 | python -c "import zlib,sys;sys.stdout.write(zlib.decompress(sys.stdin.read()))" > backup.tar
+
 
 ## IDE
 https://randomnerdtutorials.com/installing-the-esp32-board-in-arduino-ide-windows-instructions/

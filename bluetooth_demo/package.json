@@ -1,0 +1,15 @@
+{
+  "name": "bluetooth_demo",
+  "version": "1.0.0",
+  "description": "ble playground",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bluetooth-hci-socket": "git+https://github.com/jrobeson/node-bluetooth-hci-socket.git#fix-builds-for-node-10",
+    "noble": "^1.9.1"
+  }
+}
