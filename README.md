@@ -66,42 +66,22 @@ lots of stuff can be included from here: /home/ant/.arduino15/packages/esp32/har
   - 2:47 @ https://www.youtube.com/watch?v=eUPAoP7xC7A
 - ILI9341: https://www.youtube.com/watch?v=cOH7vcLCKhE uses SPI
   - https://github.com/G6EJD/ESP32-and-how-to-use-ILI9341-TFT-Display
-- MOSI = master out slave in
 - multiple i2c: https://www.youtube.com/watch?v=QQLfzlPGjjE
+- battery measurement: https://github.com/cyberman54/ESP32-Paxcounter
+- other cool stuff: https://github.com/cyberman54/ESP32-Paxcounter
 - touch tft: https://ch.rs-online.com/web/p/entwicklungskits-grafikdisplay/7916378/
   - https://www.mikroe.com/tft-proto-board
     - see links for instructions. but nowt useful
   - MI0283QT-9A with 320x240 pixel resolution, which is driven by ILI9341
   - https://github.com/loboris/ESP32_TFT_library => uses latest esp-idf stuff. SPI connection.
   - https://github.com/G6EJD/ESP32-and-how-to-use-ILI9341-TFT-Display
-  - pins:
-    - MOSI = SDI
-    - MISO = SDO
-    - sck = ??, serial clock? => must be RS on display 
-    - cs = cs
-    - dc = ??? data/command input => could be WR as thats left over
-    - tcs = touch panel, if used ??? => could be TE???
-    - rst = reset => pullup the reset input to Vcc
-    - BL = ?? => 3.3v => backlight => see led-k/a below
-    - vcc => 3.3 or 5v
-
-board also has TE, RS, RD, WR, IM0-3, LEDK, LEDA
-https://forum.mikroe.com/viewtopic.php?f=12&t=48169&p=186582&hilit=tft#p186582
-https://www.mikrocontroller.net/attachment/64474/HX8347-D_DS_T_v02_090324.pdf
-https://forum.mikroe.com/viewtopic.php?f=12&t=47582
-https://download.mikroe.com/documents/add-on-boards/other/display/tft-proto/tft-proto-manual-v200.pdf
-
-RS=register select
-CS=chip select
-RD=read enable
-WR=write enable=scl
-LED-K - Connected to the backlight circuit and further connected to the GPIO pin of the microntroller, so it can be toggled from the code.
-LED-A - Connected to the voltage of the system (VCC-SYS) on which the TFT proto board is connected (3.3V - 5V).
-
-now trying https://github.com/adafruit/Adafruit_ILI9341/blob/master/examples/graphicstest/graphicstest.ino
-
-
-
+  - see code in 007_tft
+  - see https://arduino.stackexchange.com/questions/60441/connecting-tft-display-mi0283qt-9a-to-esp32
+  - https://forum.mikroe.com/viewtopic.php?f=12&t=48169&p=186582&hilit=tft#p186582
+  - https://www.mikrocontroller.net/attachment/64474/HX8347-D_DS_T_v02_090324.pdf
+  - https://forum.mikroe.com/viewtopic.php?f=12&t=47582
+  - https://download.mikroe.com/documents/add-on-boards/other/display/tft-proto/tft-proto-manual-v200.pdf
+  - https://github.com/adafruit/Adafruit_ILI9341/blob/master/examples/graphicstest/graphicstest.ino
 - gps: https://forum.arduino.cc/index.php?topic=455373.0
 - lidar: https://www.youtube.com/watch?v=VhbFbxyOI1k
   - http://wiki.seeedstudio.com/Grove-TF_Mini_LiDAR/

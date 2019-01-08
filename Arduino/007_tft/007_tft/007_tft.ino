@@ -23,13 +23,17 @@
 //https://github.com/adafruit/Adafruit_ILI9341
 #include "Adafruit_ILI9341.h"
 
+//https://github.com/adafruit/Adafruit_TouchScreen/blob/master/examples/touchscreendemoshield/touchscreendemoshield.ino
+#include <stdint.h>
+#include "TouchScreen.h"
+
 // http://pub.ucpros.com/download/tft_320_240_mi0283qt_9a_v1_3_spec.pdf
 // https://www.watterott.com/media/files_public/dwqfttfjoim/MI0283QT-9A_Datasheet.pdf
 // https://github.com/watterott/RPi-Display/blob/master/hardware/RPi-Display_v10.pdf
 // asked here: https://arduino.stackexchange.com/questions/60441/connecting-tft-display-mi0283qt-9a-to-esp32
 #define _DC_WR      12 // WR   X 
 #define _CLK_RS_SCL 18 // RS   X (G6EJD uses nomenclature SCK/CLK)
-#define _CS_CS      15 // CS   X
+#define _CS_CS      15 // CS   X chip select
 #define _MOSI_SDI   23 // SDI  X
 #define _RST_RST    14 // RST  X (G6EJD says ESP RST to TFT RESET. but he has it on pin 13! SO says plug it into pin of own choice)
 #define _MISO_SDO   19 // SDO  X (G6EJD says not connected => but it IS!)
@@ -69,20 +73,40 @@
 // sdi -> 23  spi HW mosi
 // wr  -> 12
 // cs  -> 15
-// 
-// 
 //
-// TODO how to make sd card work with display at same time? chip select call before doing something??
-// TODO how to make touch work?
+// just found this: https://learn.adafruit.com/adafruit-2-4-color-tft-touchscreen-breakout/pinouts
 //
-// remove pins: superfluous gndx2, te, 
-// jumpers for IM pins. im1,im3,im2 => v33. im0 -> gnd
+// TODO how to make sd card work with display at same time? chip select call before doing something?? could be as simple as pin5 is chip select for SD, and cs is 15 for led.
+// TODO how to make touch work? https://learn.adafruit.com/adafruit-2-4-color-tft-touchscreen-breakout/resistive-touchscreen
+// TODO fonts and other stuff: https://learn.adafruit.com/adafruit-gfx-graphics-library/using-fonts
+//
 
+// TOUCH
+#define YP 33 // must be analog in
+#define XM 27 //must be analog in
+#define YM 16 // can be a digital pin
+#define XP 17 // can be a digital pin
+#define TS_MINX 150
+#define TS_MINY 130
+#define TS_MAXX 3800
+#define TS_MAXY 4000
+
+// UART
+#include <HardwareSerial.h>
+HardwareSerial gpsSerial(1);
+
+// For better pressure precision, we need to know the resistance
+// between X+ and X- Use any multimeter to read it
+// For the one we're using, its 1500 ohms across the X plate
+TouchScreen ts = TouchScreen(XP, YP, XM, YM, 1500);
 
 // using software spi
 Adafruit_ILI9341 tft = Adafruit_ILI9341(_CS_CS, _DC_WR, _MOSI_SDI, _CLK_RS_SCL, _RST_RST, _MISO_SDO);
 
 void setup() {
+
+  gpsSerial.begin(115200, SERIAL_8N1, 3, 1); //Baud rate, parity mode, RX, TX
+ 
   Serial.begin(115200);
   Serial.println("ILI9341 Test!"); 
   tft.begin();
@@ -105,6 +129,7 @@ void setup() {
   Serial.println(testFillScreen());
   delay(500);
 
+return; // skip tests and checkout touch
   Serial.print(F("Text                     "));
   Serial.println(testText());
   delay(3000);
@@ -152,13 +177,50 @@ void setup() {
 
 }
 
+uint8_t rotation = 0;
 
 void loop(void) {
-  for(uint8_t rotation=0; rotation<4; rotation++) {
-    tft.setRotation(rotation);
-    testText();
-    delay(1000);
+  if(rotation >= 4) rotation = 0;
+  tft.setRotation(rotation++);
+  testText();
+
+  // a point object holds x y and z coordinates
+  TSPoint p = ts.getPoint();
+  
+  // pressure of 0 means no pressing!
+  if (p.z != 0) {
+
+    Serial.print("X = "); Serial.print(p.x);
+    Serial.print("\tY = "); Serial.print(p.y);
+    Serial.print("\tPressure = "); Serial.println(p.z);
+
+/*    p.x = map(p.x, TS_MINX, TS_MAXX, 0, tft.width());
+    p.y = map(p.y, TS_MINY, TS_MAXY, 0, tft.height());
+     
+    Serial.print("X = "); Serial.print(p.x);
+    Serial.print("\tY = "); Serial.print(p.y);
+    Serial.print("\tPressure = "); Serial.println(p.z);
+TODO why does it wait so long? is it just because drawing and delay takes so long? how to make faster? read from buffer??? see other lib with 
+21:13:21.410 -> X = 203  Y = 349 Pressure = 244         => near gnd/v33
+21:13:26.458 -> X = -2004 Y = 591 Pressure = -15130     => clockwise 90%
+21:13:29.787 -> X = -1976 Y = -2456 Pressure = -14488   => clockwise 90%
+21:13:33.139 -> X = 273 Y = -2280 Pressure = 436        => clockwise 90%
+21:13:36.492 -> X = -897  Y = -511  Pressure = -2072    => centre
+
+*/
+
   }
+
+Serial.println("a");
+Serial.println(gpsSerial.available());
+  if (gpsSerial.available() > 0) { // see https://github.com/DzikuVx/esp32_gps_thingy/blob/master/gps_logger.ino
+    Serial.write(gpsSerial.read());
+    Serial.flush();
+  }
+Serial.println("a");
+
+
+  delay(250);
 }
 
 unsigned long testFillScreen() {

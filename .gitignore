@@ -6,8 +6,8 @@ Arduino/002/server01/src/passwords.h
 Arduino/libraries/IRLib*
 Arduino/libraries/z3t0-Arduino-IRremote-2dc97b2
 Arduino/libraries/ESP32-IRremote
-Arduino/libraries/Adafruit-GFX-Library/
-Arduino/libraries/Adafruit_ILI9341/
+Arduino/libraries/Adafruit*
+Arduino/libraries/SoftwareSerial
 
 esp-idf
 
@@ -16,3 +16,4 @@ apks
 btsnoop_hci.log
 
 protocolutil/out/
+
