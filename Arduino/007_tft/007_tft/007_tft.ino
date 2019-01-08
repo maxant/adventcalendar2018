@@ -31,8 +31,8 @@
 #define _CLK_RS_SCL 18 // RS   X (G6EJD uses nomenclature SCK/CLK)
 #define _CS_CS      15 // CS   X
 #define _MOSI_SDI   23 // SDI  X
-#define _RST_RST    14 // RST  X (G6EJD says ESP RST to TFT RESET. but he has it on pin 13!)
-#define _MISO_SDO   19 // SDO  X (G6EJD says not connected)
+#define _RST_RST    14 // RST  X (G6EJD says ESP RST to TFT RESET. but he has it on pin 13! SO says plug it into pin of own choice)
+#define _MISO_SDO   19 // SDO  X (G6EJD says not connected => but it IS!)
 //#define _RD         98 // read enable? no idea what it is. no one talks about using it. in rpiv10 this pin goes to ground!
 //#define _TCS        99 // TCS ???
 //LED-K - Connected to the backlight circuit and further connected to the GPIO pin of the microntroller, so it can be toggled from the code.
@@ -43,7 +43,7 @@
 //
 // note 1:
 //
-// not using D pins => leaves:
+// not using Data pins => leaves:
 // - 0101 3 wire 9 bit serial interface I:  SCL, SDA, CSX
 // - 0110 4 wire 8 bit serial interface I:  SCL, SDA, D/CX, CSX
 // - 1101 3 wire 9 bit serial interface II: SCL, SDI, SDO, CSX
@@ -51,9 +51,36 @@
 // i'd bet we're using the last one, as all are used. altho G6EJD says we don't use SDO, but that isnt an option in note 1. SDA is pin 21 on ESP32, but that seems to be related to I2C not SPI.
 // although, according to rpiv10 pdf, SDA is SDI
 // anyway... we need to connect SCL(RS), SDI, DC(WR), SDO, CS => connect them to ADC I/O pins, and configure above
+//
+// working with:
+// tft -> esp32
+// --------------------------
+// gnd -> gnd
+// v33 -> v33
+// rs  -> 18  spi HW and this is the serial clock
+// sdo -> 19  spi HW miso
+// rst -> 14
+// im2 -> v33
+// im0 -> gnd
+// ledk-> output of poti. inputs to poti are gnd and v33, make sure they are the right way round
+// leda-> v33
+// im3 -> v33
+// im1 -> v33
+// sdi -> 23  spi HW mosi
+// wr  -> 12
+// cs  -> 15
+// 
+// 
+//
+// TODO how to make sd card work with display at same time? chip select call before doing something??
+// TODO how to make touch work?
+//
+// remove pins: superfluous gndx2, te, 
+// jumpers for IM pins. im1,im3,im2 => v33. im0 -> gnd
+
 
 // using software spi
-Adafruit_ILI9341 tft = Adafruit_ILI9341(_CS_CS, _DC_WR, _MOSI_SDI, _CLK_RS_SCL, _RST_RST); //, _MISO_SDO);
+Adafruit_ILI9341 tft = Adafruit_ILI9341(_CS_CS, _DC_WR, _MOSI_SDI, _CLK_RS_SCL, _RST_RST, _MISO_SDO);
 
 void setup() {
   Serial.begin(115200);
