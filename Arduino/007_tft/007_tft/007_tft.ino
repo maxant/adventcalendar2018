@@ -23,26 +23,42 @@
 //https://github.com/adafruit/Adafruit_ILI9341
 #include "Adafruit_ILI9341.h"
 
-// For the Adafruit shield, these are the default.
-#define TFT_DC 27    // RS   X
-#define TFT_CLK 12   // WR   X
-#define TFT_CS 15    // CS   X
-#define TFT_MOSI 14  // SDI  X
-#define TFT_RST 33   // RST  X
-#define TFT_MISO 32  // SDO  X
-#define TFT_TOUCH 99 // TCS 
+// http://pub.ucpros.com/download/tft_320_240_mi0283qt_9a_v1_3_spec.pdf
+// https://www.watterott.com/media/files_public/dwqfttfjoim/MI0283QT-9A_Datasheet.pdf
+// https://github.com/watterott/RPi-Display/blob/master/hardware/RPi-Display_v10.pdf
+// asked here: https://arduino.stackexchange.com/questions/60441/connecting-tft-display-mi0283qt-9a-to-esp32
+#define _DC_WR      12 // WR   X 
+#define _CLK_RS_SCL 18 // RS   X (G6EJD uses nomenclature SCK/CLK)
+#define _CS_CS      15 // CS   X
+#define _MOSI_SDI   23 // SDI  X
+#define _RST_RST    14 // RST  X (G6EJD says ESP RST to TFT RESET. but he has it on pin 13!)
+#define _MISO_SDO   19 // SDO  X (G6EJD says not connected)
+//#define _RD         98 // read enable? no idea what it is. no one talks about using it. in rpiv10 this pin goes to ground!
+//#define _TCS        99 // TCS ???
+//LED-K - Connected to the backlight circuit and further connected to the GPIO pin of the microntroller, so it can be toggled from the code.
+//LED-A - Connected to the voltage of the system (VCC-SYS) on which the TFT proto board is connected (3.3V - 5V).
+//
+// TFT Pin36: WRX//D/CX) Write execution control pin ; Serial Register select s Signal; rpiv10Pdf: WR/D/CX     => this is the WR pin on the TFT board
+// TFT Pin37: D/CX(SCL)  Register select signal; Serial Interface Clock;                rpiv10Pdf: SCK;D/CX/SCL => none of those names are on TFT board. but we do have RS = Register Select!
+//
+// note 1:
+//
+// not using D pins => leaves:
+// - 0101 3 wire 9 bit serial interface I:  SCL, SDA, CSX
+// - 0110 4 wire 8 bit serial interface I:  SCL, SDA, D/CX, CSX
+// - 1101 3 wire 9 bit serial interface II: SCL, SDI, SDO, CSX
+// - 1110 4 wire 8 bit serial interface II: SCL, SDI, D/CX, SDO, CSX 
+// i'd bet we're using the last one, as all are used. altho G6EJD says we don't use SDO, but that isnt an option in note 1. SDA is pin 21 on ESP32, but that seems to be related to I2C not SPI.
+// although, according to rpiv10 pdf, SDA is SDI
+// anyway... we need to connect SCL(RS), SDI, DC(WR), SDO, CS => connect them to ADC I/O pins, and configure above
 
-// Use hardware SPI (on Uno, #13, #12, #11) and the above for CS/DC
-//Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC);
-// If using the breakout, change pins as desired
-Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_CLK, TFT_RST, TFT_MISO);
+// using software spi
+Adafruit_ILI9341 tft = Adafruit_ILI9341(_CS_CS, _DC_WR, _MOSI_SDI, _CLK_RS_SCL, _RST_RST); //, _MISO_SDO);
 
 void setup() {
   Serial.begin(115200);
   Serial.println("ILI9341 Test!"); 
-  Serial.println("a"); 
   tft.begin();
-  Serial.println("b"); 
 
   // read diagnostics (optional but can help debug problems)
   uint8_t x = tft.readcommand8(ILI9341_RDMODE);
